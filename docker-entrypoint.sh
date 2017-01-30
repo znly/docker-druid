@@ -35,4 +35,11 @@ if [ "$DRUID_USE_CONTAINER_IP" != "-" ]; then
     sed -ri 's/druid.host=.*/druid.host='${ipaddress}'/g' /opt/druid/conf/druid/$1/runtime.properties
 fi
 
-java `cat /opt/druid/conf/druid/$1/jvm.config | xargs` -cp /opt/druid/conf/druid/_common:/opt/druid/conf/druid/$1:/opt/druid/lib/* io.druid.cli.Main server $@
+# catch all environment vars that start with DRUID_ and set them to override druid.
+druidVars=$(env | awk -F= '/^DRUID_/ {
+    gsub("_",".",$1)
+    print "-D"tolower($1)"="$2
+}')
+
+
+java `cat /opt/druid/conf/druid/$1/jvm.config | xargs` ${druidVars} -cp /opt/druid/conf/druid/_common:/opt/druid/conf/druid/$1:/opt/druid/lib/* io.druid.cli.Main server $@

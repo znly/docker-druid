@@ -14,7 +14,7 @@ Druid is an open-source analytics data store designed for business intelligence 
 How to use?
 ===========
 
-Druid being a complex system, the best way to get up and running with a cluster is to use the docker-compose file provided. 
+Druid being a complex system, the best way to get up and running with a cluster is to use the docker-compose file provided.
 
 Clone our public repository:
 
@@ -61,6 +61,10 @@ Available environment options:
 - `DRUID_NEWSIZE` '-'
 - `DRUID_MAXNEWSIZE` '-'
 - `DRUID_HOSTNAME` '-'
+
+You can override *any* setting in `common.runtime.properties` and `runtime.properties` by setting an environment variable that matches the property name, converted to uppercase and with `.` replaced by `_`.
+
+For example, if you want to override the setting `druid.metadata.storage.connector.user` and set it to `DBUSER`, set the environment variable `DRUID_METADATA_STORAGE_CONNECTOR_USER=DBUSER`.
 
 Authors
 =======

@@ -15,52 +15,52 @@ services:
       - ZOO_SERVERS=zookeeper
 
   overlord:
-    image: znly/druid:0.9.1.1
+    image: deitch/druid:0.9.2
     environment:
-      - DRUID_XMX=1g 
-      - DRUID_XMS=1g 
-      - DRUID_MAXNEWSIZE=250m 
+      - DRUID_XMX=1g
+      - DRUID_XMS=1g
+      - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
     command:
       - overlord
 
   coordinator:
-    image: znly/druid:0.9.1.1
+    image: deitch/druid:0.9.2
     environment:
-      - DRUID_XMX=1g 
-      - DRUID_XMS=1g 
-      - DRUID_MAXNEWSIZE=250m 
+      - DRUID_XMX=1g
+      - DRUID_XMS=1g
+      - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
     command:
       - coordinator
 
 
   middlemanager:
-    image: znly/druid:0.9.1.1
+    image: deitch/druid:0.9.2
     environment:
-      - DRUID_XMX=1g 
-      - DRUID_XMS=1g 
-      - DRUID_MAXNEWSIZE=250m 
+      - DRUID_XMX=1g
+      - DRUID_XMS=1g
+      - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
     command:
       - middleManager
 
   historical:
-    image: znly/druid:0.9.1.1
+    image: deitch/druid:0.9.2
     environment:
-      - DRUID_XMX=1g 
-      - DRUID_XMS=1g 
-      - DRUID_MAXNEWSIZE=250m 
+      - DRUID_XMX=1g
+      - DRUID_XMS=1g
+      - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
     command:
       - historical
 
   broker:
-    image: znly/druid:0.9.1.1
+    image: deitch/druid:0.9.2
     environment:
-      - DRUID_XMX=1g 
-      - DRUID_XMS=1g 
-      - DRUID_MAXNEWSIZE=250m 
+      - DRUID_XMX=1g
+      - DRUID_XMS=1g
+      - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
     command:
       - broker

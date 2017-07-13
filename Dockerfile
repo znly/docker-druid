@@ -18,13 +18,13 @@ RUN opkg-install wget tar bash \
     && mkdir /tmp/druid
 
 RUN wget -q --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - \
-    http://download.oracle.com/otn-pub/java/jdk/8u40-b26/jre-8u40-linux-x64.tar.gz | tar -xzf - -C /opt 
+     http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz | tar -xzf - -C /opt 
 
-RUN wget -q --no-check-certificate --no-cookies -O - \ 
+RUN wget -q --no-check-certificate --no-cookies -O - \
     http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-bin.tar.gz | tar -xzf - -C /opt \
     && ln -s /opt/druid-$DRUID_VERSION /opt/druid
 
-COPY conf /opt/druid-$DRUID_VERSION/conf 
+COPY conf /opt/druid-$DRUID_VERSION/conf
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN mkdir -p /tmp/druid

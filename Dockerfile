@@ -3,8 +3,8 @@ MAINTAINER jbaptiste <jb@zen.ly>
 
 # Java config
 ENV DRUID_VERSION   0.9.1.1
-ENV JAVA_HOME       /opt/jre1.8.0_131
-ENV PATH            $PATH:/opt/jre1.8.0_131/bin
+ENV JAVA_HOME       /opt/jdk1.8.0_131
+ENV PATH            $PATH:/opt/jdk1.8.0_131/bin
 
 # Druid env variable
 ENV DRUID_XMX           '-'
@@ -14,7 +14,7 @@ ENV DRUID_MAXNEWSIZE    '-'
 ENV DRUID_HOSTNAME      '-'
 ENV DRUID_LOGLEVEL      '-'
 ENV DRUID_USE_CONTAINER_IP      '-'
-RUN opkg-install wget tar bash \
+RUN opkg-install wget tar bash curl vim \
     && mkdir /tmp/druid
 
 RUN wget -q --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - \

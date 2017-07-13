@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting $@ with teh following"
+echo "Starting $@ with the following"
 echo "DRUID_XMX ${DRUID_XMX}"
 echo "DRUID_XMS ${DRUID_XMS}"
 echo "DRUID_MAXNEWSIZE ${DRUID_MAXNEWSIZE}"

@@ -21,6 +21,9 @@ services:
       - DRUID_XMS=1g
       - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
+  deploy:
+    placement:
+      constraints: [node.role == manager]
     ports:
       - 8090:8090
     command:

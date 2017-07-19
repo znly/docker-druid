@@ -2,7 +2,7 @@ FROM progrium/busybox
 MAINTAINER jbaptiste <jb@zen.ly>
 
 # Java config
-ENV DRUID_VERSION   0.9.1.1
+ENV DRUID_VERSION   0.10.0
 ENV JAVA_HOME       /opt/jdk1.8.0_131
 ENV PATH            $PATH:/opt/jdk1.8.0_131/bin
 

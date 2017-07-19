@@ -9,6 +9,7 @@ echo "DRUID_NEWSIZE ${DRUID_NEWSIZE}"
 echo "DRUID_HOSTNAME ${DRUID_HOSTNAME}"
 echo "DRUID_LOGLEVEL ${DRUID_LOGLEVEL}"
 echo "DRUID_USE_CONTAINER_IP ${DRUID_USE_CONTAINER_IP}"
+echo "DRUID_MAX_DIRECTMEM_SIZE ${DRUID_MAX_DIRECTMEM_SIZE}"
 echo "ipaddress ${ipaddress}"
 
 
@@ -47,4 +48,8 @@ if [ "$DRUID_USE_CONTAINER_IP" != "-" ]; then
     sed -ri 's/druid.host=.*/druid.host='${ipaddress}'/g' /opt/druid/conf/druid/$1/runtime.properties
 fi
 echo 8
+if [ "$DRUID_MAX_DIRECTMEM_SIZE" != "-" ]; then
+    sed -ri 's/MaxDirectMemorySize.*/MaxDirectMemorySize='${DRUID_MAX_DIRECTMEM_SIZE}'/g' /opt/druid/conf/druid/$1/jvm.config
+fi
+echo 9
 java `cat /opt/druid/conf/druid/$1/jvm.config | xargs` -cp /opt/druid/conf/druid/_common:/opt/druid/conf/druid/$1:/opt/druid/lib/* io.druid.cli.Main server $@

@@ -14,6 +14,7 @@ ENV DRUID_MAXNEWSIZE    '-'
 ENV DRUID_HOSTNAME      '-'
 ENV DRUID_LOGLEVEL      '-'
 ENV DRUID_USE_CONTAINER_IP      '-'
+ENV DRUID_MAX_DIRECTMEM_SIZE "-"
 RUN opkg-install wget tar bash curl vim \
     && mkdir /tmp/druid
 

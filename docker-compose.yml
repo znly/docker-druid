@@ -15,19 +15,23 @@ services:
       - ZOO_SERVERS=zookeeper
 
   overlord:
-    image: gcr.io/npav-172917/druid:0.9.1.1
+    image: gcr.io/npav-172917/druid:0.10.0
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
       - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
     ports:
       - 8090:8090
     command:
       - overlord
 
   coordinator:
-    image: gcr.io/npav-172917/druid:0.9.1.1
+    image: gcr.io/npav-172917/druid:0.10.0
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
@@ -38,7 +42,7 @@ services:
 
 
   middlemanager:
-    image: gcr.io/npav-172917/druid:0.9.1.1
+    image: gcr.io/npav-172917/druid:0.10.0
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
@@ -48,7 +52,7 @@ services:
       - middleManager
 
   historical:
-    image: gcr.io/npav-172917/druid:0.9.1.1
+    image: gcr.io/npav-172917/druid:0.10.0
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
@@ -58,7 +62,7 @@ services:
       - historical
 
   broker:
-    image: gcr.io/npav-172917/druid:0.9.1.1
+    image: gcr.io/npav-172917/druid:0.10.0
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g

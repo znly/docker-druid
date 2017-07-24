@@ -76,3 +76,110 @@ services:
           - node.role == manager
     command:
       - broker
+
+  jn1:
+    image: f21global/hadoop:2.7.3
+    container_name: jn1
+    hostname: jn1
+    environment:
+      CLUSTER_NAME: mycluster
+      HADOOP_ROLE: journalnode
+    ports:
+      - "8480:8480"
+
+  jn2:
+    image: f21global/hadoop:2.7.3
+    container_name: jn2
+    hostname: jn2
+    environment:
+      CLUSTER_NAME: mycluster
+      HADOOP_ROLE: journalnode
+    ports:
+      - "8481:8480"
+
+  jn3:
+    image: f21global/hadoop:2.7.3
+    container_name: jn3
+    hostname: jn3
+    environment:
+      CLUSTER_NAME: mycluster
+      HADOOP_ROLE: journalnode
+    ports:
+      - "8482:8480"
+
+  nn1:
+    image: f21global/hadoop:2.7.3
+    container_name: nn1
+    hostname: nn1
+    environment:
+      CLUSTER_NAME: mycluster
+      DFS_NAMESERVICE_ID: ns1
+      DFS_NAMENODE_SHARED_EDITS_DIR: jn1:8485,jn2:8485,jn3:8485
+      DFS_NAMENODE_RPC_ADDRESS_NN1: nn1:8020
+      DFS_NAMENODE_RPC_ADDRESS_NN2: nn2:8020
+      DFS_NAMENODE_HTTP_ADDRESS_NN1: nn1:50070
+      DFS_NAMENODE_HTTP_ADDRESS_NN2: nn2:50070
+      HA_ZOOKEEPER_QUORUM: zk:2181
+      HADOOP_ROLE: namenode
+    ports:
+      - "50070:50070"
+
+  nn2:
+    image: f21global/hadoop:2.7.3
+    container_name: nn2
+    hostname: nn2
+    environment:
+      CLUSTER_NAME: mycluster
+      DFS_NAMESERVICE_ID: ns1
+      DFS_NAMENODE_SHARED_EDITS_DIR: jn1:8485,jn2:8485,jn3:8485
+      DFS_NAMENODE_RPC_ADDRESS_NN1: nn1:8020
+      DFS_NAMENODE_RPC_ADDRESS_NN2: nn2:8020
+      DFS_NAMENODE_HTTP_ADDRESS_NN1: nn1:50070
+      DFS_NAMENODE_HTTP_ADDRESS_NN2: nn2:50070
+      HA_ZOOKEEPER_QUORUM: zk:2181
+      STANDBY: "true"
+      HADOOP_ROLE: namenode
+    ports:
+      - "50071:50070"
+
+  dn1:
+    image: f21global/hadoop:2.7.3
+    container_name: dn1
+    hostname: dn1
+    environment:
+      DFS_NAMESERVICES: ns1
+      NS1_DFS_NAMENODE_RPC_ADDRESS_NN1: nn1:8020
+      NS1_DFS_NAMENODE_RPC_ADDRESS_NN2: nn2:8020
+      NS1_DFS_NAMENODE_HTTP_ADDRESS_NN1: nn1:50070
+      NS1_DFS_NAMENODE_HTTP_ADDRESS_NN2: nn2:50070
+      HADOOP_ROLE: datanode
+    ports:
+      - "50075:50075"
+
+  dn2:
+    image: f21global/hadoop:2.7.3
+    container_name: dn2
+    hostname: dn2
+    environment:
+      DFS_NAMESERVICES: ns1
+      NS1_DFS_NAMENODE_RPC_ADDRESS_NN1: nn1:8020
+      NS1_DFS_NAMENODE_RPC_ADDRESS_NN2: nn2:8020
+      NS1_DFS_NAMENODE_HTTP_ADDRESS_NN1: nn1:50070
+      NS1_DFS_NAMENODE_HTTP_ADDRESS_NN2: nn2:50070
+      HADOOP_ROLE: datanode
+    ports:
+      - "50076:50075"
+
+  dn3:
+    image: f21global/hadoop:2.7.3
+    container_name: dn3
+    hostname: dn3
+    environment:
+      DFS_NAMESERVICES: ns1
+      NS1_DFS_NAMENODE_RPC_ADDRESS_NN1: nn1:8020
+      NS1_DFS_NAMENODE_RPC_ADDRESS_NN2: nn2:8020
+      NS1_DFS_NAMENODE_HTTP_ADDRESS_NN1: nn1:50070
+      NS1_DFS_NAMENODE_HTTP_ADDRESS_NN2: nn2:50070
+      HADOOP_ROLE: datanode
+    ports:
+      - "50077:50075"

@@ -9,7 +9,6 @@ services:
         - 8080
     environment:
         INTERLOCK_CONFIG: |
-            PollInterval = "5s"
             ListenAddr = ":8080"
             DockerURL = "unix:///var/run/docker.sock"
             # TLSCACert = "/etc/docker/ca.pem"
@@ -61,11 +60,12 @@ services:
     image: gcr.io/npav-172917/druid:0.10.0-1
     hostname: overloard
     labels:
-      # - "interlock.hostname=_"
-        - "interlock.domain=local"
+        - "interlock.hostname=test"
+        - "interlock.domain=aodtest.com"
         - "interlock.port=8090"
         - "interlock.network=druid_default"
         - "interlock.context_root=/overlord"
+        - "interlock.context_root_rewrite=true"
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g

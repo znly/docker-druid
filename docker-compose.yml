@@ -127,3 +127,13 @@ services:
     command:
       - broker
 
+  pithos:
+    image: gcr.io/npav-172917/pithos:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cassandra
+    volumes:
+      - /var/lib/data/pithos:/pithos/data
+  cassandra:
+    image: cassandra:2.1

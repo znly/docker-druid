@@ -82,11 +82,20 @@ services:
 
   coordinator:
     image: gcr.io/npav-172917/druid:0.10.0-1
+    labels:
+        - "interlock.hostname=test"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=8081"
+        - "interlock.network=druid_default"
+        - "interlock.context_root=/coordinator"
+        - "interlock.context_root_rewrite=true"
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
       - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
+    ports:
+      - 8081
     command:
       - coordinator
 

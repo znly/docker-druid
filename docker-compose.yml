@@ -10,10 +10,12 @@ services:
     environment:
         INTERLOCK_CONFIG: |
             ListenAddr = ":8080"
-            DockerURL = "unix:///var/run/docker.sock"
-            # TLSCACert = "/etc/docker/ca.pem"
-            # TLSCert = "/etc/docker/server.pem"
-            # TLSKey = "/etc/docker/server-key.pem"
+            PollInterval = "5s"
+            DockerURL = "tcp://debian-leader.c.npav-172917.internal:2376"
+            #DockerURL = "unix:///var/run/docker.sock"
+            TLSCACert = "/etc/docker/ssl/docker-ca.pem"
+            TLSCert = "/etc/docker/ssl/docker-cert.pem"
+            TLSKey = "/etc/docker/ssl/docker-key.pem"
             [[Extensions]]
             Name = "nginx"
             ConfigPath = "/etc/nginx/nginx.conf"
@@ -26,10 +28,7 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
 
     deploy:
-      placement:
-        constraints:
-          - node.role == manager
-
+        mode: global
   nginx:
     image: nginx:latest
     entrypoint: nginx
@@ -58,7 +57,7 @@ services:
 
   overlord:
     image: gcr.io/npav-172917/druid:0.10.0-1
-    hostname: overloard
+    hostname: overlord
     labels:
         - "interlock.hostname=test"
         - "interlock.domain=aodtest.com"
@@ -82,6 +81,7 @@ services:
 
   coordinator:
     image: gcr.io/npav-172917/druid:0.10.0-1
+    hostname: coordinator
     labels:
         - "interlock.hostname=test"
         - "interlock.domain=aodtest.com"

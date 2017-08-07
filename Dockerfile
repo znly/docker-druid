@@ -1,4 +1,4 @@
-FROM progrium/busybox
+FROM iron/java:1.8
 MAINTAINER jbaptiste <jb@zen.ly>
 
 # Java config
@@ -15,15 +15,18 @@ ENV DRUID_HOSTNAME      '-'
 ENV DRUID_LOGLEVEL      '-'
 ENV DRUID_USE_CONTAINER_IP      '-'
 ENV DRUID_MAX_DIRECTMEM_SIZE "-"
-RUN opkg-install wget tar bash curl vim \
+RUN apk update && apk add wget tar bash curl vim \
     && mkdir /tmp/druid
 
+RUN mkdir -p /opt
 RUN wget -q --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - \
      http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/server-jre-8u131-linux-x64.tar.gz | tar -xzf - -C /opt
 
 RUN wget -q --no-check-certificate --no-cookies -O - \
     http://static.druid.io/artifacts/releases/druid-$DRUID_VERSION-bin.tar.gz | tar -xzf - -C /opt \
     && ln -s /opt/druid-$DRUID_VERSION /opt/druid
+
+RUN rm -rf /var/cache/apk/*
 
 COPY conf /opt/druid-$DRUID_VERSION/conf
 COPY docker-entrypoint.sh /docker-entrypoint.sh

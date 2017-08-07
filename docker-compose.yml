@@ -2,7 +2,8 @@ version: "3"
 services:
 
   interlock:
-    image: ehazlett/interlock:1.4.1
+    image:  gcr.io/npav-172917/interlock:latest
+    #image: ehazlett/interlock:1.4.1
     command: -D run  -c /etc/interlock/config.toml
     tty: true
     ports:
@@ -10,10 +11,12 @@ services:
     environment:
         INTERLOCK_CONFIG: |
             ListenAddr = ":8080"
+            #PollInterval = "5s"
             DockerURL = "unix:///var/run/docker.sock"
-            # TLSCACert = "/etc/docker/ca.pem"
-            # TLSCert = "/etc/docker/server.pem"
-            # TLSKey = "/etc/docker/server-key.pem"
+            #DockerURL = "tcp://debian-leader.c.npav-172917.internal:2376"
+            #TLSCACert = "/etc/docker/ssl/docker-ca.pem"
+            #TLSCert = "/etc/docker/ssl/docker-cert.pem"
+            #TLSKey = "/etc/docker/ssl/docker-key.pem"
             [[Extensions]]
             Name = "nginx"
             ConfigPath = "/etc/nginx/nginx.conf"
@@ -26,10 +29,7 @@ services:
         - /var/run/docker.sock:/var/run/docker.sock
 
     deploy:
-      placement:
-        constraints:
-          - node.role == manager
-
+        mode: global
   nginx:
     image: nginx:latest
     entrypoint: nginx
@@ -58,14 +58,14 @@ services:
 
   overlord:
     image: gcr.io/npav-172917/druid:0.10.0-1
-    hostname: overloard
+    hostname: overlord
     labels:
-        - "interlock.hostname=test"
+        - "interlock.hostname=druid"
         - "interlock.domain=aodtest.com"
         - "interlock.port=8090"
         - "interlock.network=druid_default"
-        - "interlock.context_root=/overlord"
-        - "interlock.context_root_rewrite=true"
+        - "interlock.context_root="
+        - "interlock.context_root_rewrite=false"
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
@@ -76,29 +76,31 @@ services:
         constraints:
           - node.role == manager
     ports:
-      - 8090
+      - 8090:8090
     command:
       - overlord
 
   coordinator:
     image: gcr.io/npav-172917/druid:0.10.0-1
+    hostname: coordinator
     labels:
-        - "interlock.hostname=test"
+        - "interlock.hostname=coordinator"
         - "interlock.domain=aodtest.com"
         - "interlock.port=8081"
         - "interlock.network=druid_default"
-        - "interlock.context_root=/coordinator"
-        - "interlock.context_root_rewrite=true"
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
       - DRUID_MAXNEWSIZE=250m
       - DRUID_NEWSIZE=250m
     ports:
-      - 8081
+      - 8081:8081
     command:
       - coordinator
-
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
 
   middlemanager:
     image: gcr.io/npav-172917/druid:0.10.0-1
@@ -121,6 +123,10 @@ services:
     command:
       - historical
 
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
   broker:
     image: gcr.io/npav-172917/druid:0.10.0-1
     environment:
@@ -132,17 +138,75 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
     command:
       - broker
 
   pithos:
     image: gcr.io/npav-172917/pithos:latest
+    hostname: pithos
     ports:
       - "8080:8080"
     depends_on:
       - cassandra
     volumes:
       - /var/lib/data/pithos:/pithos/data
+
   cassandra:
     image: cassandra:2.1
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+
+  metabase:
+    image: metabase/metabase-head:latest
+    #image: metabase/metabase:v0.25.1
+    hostname: metabase
+    ports:
+      - 3000:3000
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    labels:
+        - "interlock.hostname=metabase"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=3000"
+        - "interlock.network=druid_default"
+
+  tranquility:
+    image: gofly/tranquility:0.8.2
+    hostname: tranquility
+    labels:
+        - "interlock.hostname=tranquility"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=8200"
+        - "interlock.network=druid_default"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+        - /etc/localtime:/etc/localtime
+        - $PWD/tranquility-conf:/srv/tranquility/conf
+    ports:
+        - 8200:8200
+
+  superset:
+    hostname: superset
+    image: amancevice/superset:0.18.5
+    ports:
+      - 8088
+    volumes:
+      - $PWD/superset-conf:/etc/superset
+    labels:
+        - "interlock.hostname=test"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=8088"
+        - "interlock.network=druid_default"
+
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager

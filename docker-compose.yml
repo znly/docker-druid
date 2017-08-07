@@ -123,6 +123,10 @@ services:
     command:
       - historical
 
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
   broker:
     image: gcr.io/npav-172917/druid:0.10.0-1
     environment:
@@ -134,7 +138,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
     command:
       - broker
 
@@ -170,3 +174,39 @@ services:
         - "interlock.domain=aodtest.com"
         - "interlock.port=3000"
         - "interlock.network=druid_default"
+
+  tranquility:
+    image: gofly/tranquility:0.8.2
+    hostname: tranquility
+    labels:
+        - "interlock.hostname=tranquility"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=8200"
+        - "interlock.network=druid_default"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+        - /etc/localtime:/etc/localtime
+        - $PWD/tranquility-conf:/srv/tranquility/conf
+    ports:
+        - 8200:8200
+
+  superset:
+    hostname: superset
+    image: amancevice/superset:0.18.5
+    ports:
+      - 8088
+    volumes:
+      - $PWD/superset-conf:/etc/superset
+    labels:
+        - "interlock.hostname=test"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=8088"
+        - "interlock.network=druid_default"
+
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager

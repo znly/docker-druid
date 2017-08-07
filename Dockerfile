@@ -1,8 +1,8 @@
-FROM iron/java:1.8
+FROM iron/go
 MAINTAINER jbaptiste <jb@zen.ly>
 
 # Java config
-ENV DRUID_VERSION   0.10.0
+ENV DRUID_VERSION   0.10.1-rc2
 ENV JAVA_HOME       /opt/jdk1.8.0_131
 ENV PATH            $PATH:/opt/jdk1.8.0_131/bin
 

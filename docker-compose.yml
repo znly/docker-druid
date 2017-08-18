@@ -57,7 +57,7 @@ services:
       - ZOO_SERVERS=zookeeper
 
   overlord:
-    image: gcr.io/npav-172917/druid:0.10.0-1
+    image: gcr.io/npav-172917/druid:0.10.1
     hostname: overlord
     labels:
         - "interlock.hostname=druid"
@@ -81,7 +81,7 @@ services:
       - overlord
 
   coordinator:
-    image: gcr.io/npav-172917/druid:0.10.0-1
+    image: gcr.io/npav-172917/druid:0.10.1
     hostname: coordinator
     labels:
         - "interlock.hostname=coordinator"
@@ -103,7 +103,7 @@ services:
           - node.role == manager
 
   middlemanager:
-    image: gcr.io/npav-172917/druid:0.10.0-1
+    image: gcr.io/npav-172917/druid:0.10.1
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
@@ -113,7 +113,7 @@ services:
       - middleManager
 
   historical:
-    image: gcr.io/npav-172917/druid:0.10.0-1
+    image: gcr.io/npav-172917/druid:0.10.1
     environment:
       - DRUID_XMX=1g
       - DRUID_XMS=1g
@@ -128,7 +128,12 @@ services:
         constraints:
           - node.role == worker
   broker:
-    image: gcr.io/npav-172917/druid:0.10.0-1
+    image: gcr.io/npav-172917/druid:0.10.1
+    labels:
+        - "interlock.hostname=broker"
+        - "interlock.domain=aodtest.com"
+        - "interlock.port=8082"
+        - "interlock.network=druid_default"
     environment:
       - DRUID_XMX=3g
       - DRUID_XMS=1g
@@ -138,7 +143,9 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == worker
+          - node.role == master
+    ports:
+        - 8082
     command:
       - broker
 
@@ -158,6 +165,8 @@ services:
       placement:
         constraints:
           - node.role == worker
+    volumes:
+      - /var/lib/data/cassandra:/var/lib/cassandra/
 
   metabase:
     image: metabase/metabase-head:latest
@@ -195,13 +204,14 @@ services:
 
   superset:
     hostname: superset
-    image: amancevice/superset:0.18.5
+    #image: amancevice/superset:0.18.5
+    image: amancevice/superset:latest
     ports:
       - 8088
     volumes:
       - $PWD/superset-conf:/etc/superset
     labels:
-        - "interlock.hostname=test"
+        - "interlock.hostname=superset"
         - "interlock.domain=aodtest.com"
         - "interlock.port=8088"
         - "interlock.network=druid_default"

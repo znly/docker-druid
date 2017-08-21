@@ -35,5 +35,5 @@ COPY conf /opt/druid-$DRUID_VERSION/conf
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN mkdir -p /tmp/druid
-EXPOSE 8090 8081 8080
+EXPOSE 8090 8081 8080 8082
 ENTRYPOINT ["/docker-entrypoint.sh"]

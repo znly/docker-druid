@@ -143,7 +143,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == master
+          - node.role == manager
     ports:
         - 8082
     command:

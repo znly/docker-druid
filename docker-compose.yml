@@ -166,6 +166,9 @@ services:
       placement:
         constraints:
           - node.role == worker
+    environment:
+      CASSANDRA_SEEDS: cassandra
+      CASSANDRA_BROADCAST_ADDRESS: cassandra
     volumes:
       - /var/lib/data/cassandra:/var/lib/cassandra/
 
@@ -176,7 +179,8 @@ services:
         constraints:
           - node.role == worker
     environment:
-      - CASSANDRA_SEEDS="cassandra"
+      CASSANDRA_SEEDS: cassandra
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-worker
     volumes:
       - /var/lib/data/cassandra:/var/lib/cassandra-worker/
 

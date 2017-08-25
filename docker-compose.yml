@@ -156,8 +156,6 @@ services:
       - "8080:8080"
     depends_on:
       - cassandra
-    environment:
-      - CASSANDRA_SEEDS="cassandra, cassandra.1"
 
     volumes:
       - /var/lib/data/pithos:/pithos/data
@@ -168,6 +166,8 @@ services:
       placement:
         constraints:
           - node.role == worker
+    environment:
+      - CASSANDRA_SEEDS="cassandra,cassandra.1"
     volumes:
       - /var/lib/data/cassandra:/var/lib/cassandra/
 

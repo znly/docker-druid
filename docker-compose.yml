@@ -166,10 +166,19 @@ services:
       placement:
         constraints:
           - node.role == worker
-    environment:
-      - CASSANDRA_SEEDS="cassandra,cassandra.1"
     volumes:
       - /var/lib/data/cassandra:/var/lib/cassandra/
+
+  cassandra-worker:
+    image: cassandra:2.1
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    environment:
+      - CASSANDRA_SEEDS="cassandra"
+    volumes:
+      - /var/lib/data/cassandra:/var/lib/cassandra-worker/
 
   metabase:
     image: metabase/metabase-head:latest

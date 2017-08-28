@@ -116,7 +116,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels == ${DEPLOYMENT}-3
+          - node.labels.${DEPLOYMENT_NAME}-3 == true
 
   historical:
     image: gcr.io/npav-172917/druid:0.10.1
@@ -131,7 +131,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels == ${DEPLOYMENT}-2
+          - node.labels.${DEPLOYMENT_NAME}-3 == true
 
   broker:
     image: gcr.io/npav-172917/druid:0.10.1
@@ -153,7 +153,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels == ${DEPLOYMENT}-1
+          - node.labels.${DEPLOYMENT_NAME}-1 == true
 
   metabase:
     image: metabase/metabase-head:latest
@@ -226,7 +226,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels == ${DEPLOYMENT_NAME}-1
+          - node.labels.${DEPLOYMENT_NAME}-1 == true
     environment:
       CASSANDRA_SEEDS: cassandra-1
       CASSANDRA_BROADCAST_ADDRESS: cassandra-1
@@ -238,7 +238,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels == ${DEPLOYMENT_NAME}-2
+          - node.labels.${DEPLOYMENT_NAME}-2 == true
     environment:
       CASSANDRA_SEEDS: cassandra-1
       CASSANDRA_BROADCAST_ADDRESS: cassandra-2
@@ -250,7 +250,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels == ${DEPLOYMENT_NAME}-3
+          - node.labels.${DEPLOYMENT_NAME}-3 == true
     environment:
       CASSANDRA_SEEDS: cassandra-1
       CASSANDRA_BROADCAST_ADDRESS: cassandra-3

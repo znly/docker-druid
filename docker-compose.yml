@@ -182,7 +182,7 @@ services:
       CASSANDRA_SEEDS: cassandra
       CASSANDRA_BROADCAST_ADDRESS: cassandra-worker
     volumes:
-      - /var/lib/data/cassandra:/var/lib/cassandra-worker/
+      - /var/lib/data/cassandra-worker:/var/lib/cassandra/
 
   metabase:
     image: metabase/metabase-head:latest

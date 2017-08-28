@@ -57,6 +57,7 @@ services:
       - ZOO_ID=1
       - ZOO_SERVERS=zookeeper
 
+## Druid nodes
   overlord:
     image: gcr.io/npav-172917/druid:0.10.1
     hostname: overlord
@@ -115,22 +116,22 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == worker
+          - node.labels == ${DEPLOYMENT}-3
 
   historical:
     image: gcr.io/npav-172917/druid:0.10.1
     environment:
-      - DRUID_XMX=1g
+      - DRUID_XMX=3g
       - DRUID_XMS=1g
-      - DRUID_MAXNEWSIZE=250m
-      - DRUID_NEWSIZE=250m
+      - DRUID_MAXNEWSIZE=700m
+      - DRUID_NEWSIZE=500m
       - DRUID_MAX_DIRECTMEM_SIZE=1500m
     command:
       - historical
     deploy:
       placement:
         constraints:
-          - node.role == worker
+          - node.labels == ${DEPLOYMENT}-2
 
   broker:
     image: gcr.io/npav-172917/druid:0.10.1
@@ -140,54 +141,19 @@ services:
         - "interlock.port=8082"
         - "interlock.network=druid_default"
     environment:
-      - DRUID_XMX=3g
-      - DRUID_XMS=1g
-      - DRUID_MAXNEWSIZE=800m
+      - DRUID_XMX=4g
+      - DRUID_XMS=1500m
+      - DRUID_MAXNEWSIZE=1g
       - DRUID_NEWSIZE=500m
       - DRUID_MAX_DIRECTMEM_SIZE=1500m
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
     ports:
-        - 8082
+        - 8082:8082
     command:
       - broker
-
-  pithos:
-    image: gcr.io/npav-172917/pithos:latest
-    hostname: pithos
-    ports:
-      - "8080:8080"
-    depends_on:
-      - cassandra
-
-    volumes:
-      - /var/lib/data/pithos:/pithos/data
-
-  cassandra:
-    image: cassandra:2.1
     deploy:
       placement:
         constraints:
-          - node.role == worker
-    environment:
-      CASSANDRA_SEEDS: cassandra
-      CASSANDRA_BROADCAST_ADDRESS: cassandra
-    volumes:
-      - /var/lib/data/cassandra:/var/lib/cassandra/
-
-  cassandra-worker:
-    image: cassandra:2.1
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
-    environment:
-      CASSANDRA_SEEDS: cassandra
-      CASSANDRA_BROADCAST_ADDRESS: cassandra-worker
-    volumes:
-      - /var/lib/data/cassandra-worker:/var/lib/cassandra/
+          - node.labels == ${DEPLOYMENT}-1
 
   metabase:
     image: metabase/metabase-head:latest
@@ -205,39 +171,88 @@ services:
         - "interlock.port=3000"
         - "interlock.network=druid_default"
 
-  tranquility:
-    image: gofly/tranquility:0.8.2
-    hostname: tranquility
-    labels:
-        - "interlock.hostname=${DEPLOYMENT_NAME}.tranquility"
-        - "interlock.domain=${DOMAIN_NAME}"
-        - "interlock.port=8200"
-        - "interlock.network=druid_default"
+  # tranquility:
+  #   image: gofly/tranquility:0.8.2
+  #   hostname: tranquility
+  #   labels:
+  #       - "interlock.hostname=${DEPLOYMENT_NAME}.tranquility"
+  #       - "interlock.domain=${DOMAIN_NAME}"
+  #       - "interlock.port=8200"
+  #       - "interlock.network=druid_default"
+  #   deploy:
+  #     placement:
+  #       constraints:
+  #         - node.role == manager
+  #   volumes:
+  #       - /etc/localtime:/etc/localtime
+  #       - $PWD/tranquility-conf:/srv/tranquility/conf
+  #   ports:
+  #       - 8200:8200
+
+  # superset:
+  #   hostname: superset
+  #   #image: amancevice/superset:0.18.5
+  #   image: amancevice/superset:latest
+  #   ports:
+  #     - 8088
+  #   volumes:
+  #     - $PWD/superset-conf:/etc/superset
+  #   labels:
+  #       - "interlock.hostname=${DEPLOYMENT_NAME}.superset"
+  #       - "interlock.domain=${DOMAIN_NAME}"
+  #       - "interlock.port=8088"
+  #       - "interlock.network=druid_default"
+
+  #   deploy:
+  #     placement:
+  #       constraints:
+  #         - node.role == manager
+
+## S3 on-prem support:
+
+  pithos:
+    image: gcr.io/npav-172917/pithos:latest
+    hostname: pithos
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cassandra
+
+    volumes:
+      - /var/lib/data/pithos:/pithos/data
+
+  cassandra-1:
+    image: cassandra:2.1
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.labels == ${DEPLOYMENT_NAME}-1
+    environment:
+      CASSANDRA_SEEDS: cassandra-1
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-1
     volumes:
-        - /etc/localtime:/etc/localtime
-        - $PWD/tranquility-conf:/srv/tranquility/conf
-    ports:
-        - 8200:8200
+      - /var/lib/data/cassandra:/var/lib/cassandra/
 
-  superset:
-    hostname: superset
-    #image: amancevice/superset:0.18.5
-    image: amancevice/superset:latest
-    ports:
-      - 8088
-    volumes:
-      - $PWD/superset-conf:/etc/superset
-    labels:
-        - "interlock.hostname=${DEPLOYMENT_NAME}.superset"
-        - "interlock.domain=${DOMAIN_NAME}"
-        - "interlock.port=8088"
-        - "interlock.network=druid_default"
-
+  cassandra-2:
+    image: cassandra:2.1
     deploy:
       placement:
         constraints:
-          - node.role == manager
+          - node.labels == ${DEPLOYMENT_NAME}-2
+    environment:
+      CASSANDRA_SEEDS: cassandra-1
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-2
+    volumes:
+      - /var/lib/data/cassandra:/var/lib/cassandra/
+
+  cassandra-3:
+    image: cassandra:2.1
+    deploy:
+      placement:
+        constraints:
+          - node.labels == ${DEPLOYMENT_NAME}-3
+    environment:
+      CASSANDRA_SEEDS: cassandra-1
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-3
+    volumes:
+      - /var/lib/data/cassandra:/var/lib/cassandra/

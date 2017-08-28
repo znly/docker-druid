@@ -30,6 +30,7 @@ services:
 
     deploy:
         mode: global
+
   nginx:
     image: nginx:latest
     entrypoint: nginx
@@ -60,8 +61,8 @@ services:
     image: gcr.io/npav-172917/druid:0.10.1
     hostname: overlord
     labels:
-        - "interlock.hostname=druid"
-        - "interlock.domain=aodtest.com"
+        - "interlock.hostname=${DEPLOYMENT_NAME}.druid"
+        - "interlock.domain=${DOMAIN_NAME}"
         - "interlock.port=8090"
         - "interlock.network=druid_default"
         - "interlock.context_root="
@@ -84,8 +85,8 @@ services:
     image: gcr.io/npav-172917/druid:0.10.1
     hostname: coordinator
     labels:
-        - "interlock.hostname=coordinator"
-        - "interlock.domain=aodtest.com"
+        - "interlock.hostname=${DEPLOYMENT_NAME}.coordinator"
+        - "interlock.domain=${DOMAIN_NAME}"
         - "interlock.port=8081"
         - "interlock.network=druid_default"
     environment:
@@ -134,8 +135,8 @@ services:
   broker:
     image: gcr.io/npav-172917/druid:0.10.1
     labels:
-        - "interlock.hostname=broker"
-        - "interlock.domain=aodtest.com"
+        - "interlock.hostname=${DEPLOYMENT_NAME}.broker"
+        - "interlock.domain=${DOMAIN_NAME}"
         - "interlock.port=8082"
         - "interlock.network=druid_default"
     environment:
@@ -199,8 +200,8 @@ services:
         constraints:
           - node.role == manager
     labels:
-        - "interlock.hostname=metabase"
-        - "interlock.domain=aodtest.com"
+        - "interlock.hostname=${DEPLOYMENT_NAME}.metabase"
+        - "interlock.domain=${DOMAIN_NAME}"
         - "interlock.port=3000"
         - "interlock.network=druid_default"
 
@@ -208,8 +209,8 @@ services:
     image: gofly/tranquility:0.8.2
     hostname: tranquility
     labels:
-        - "interlock.hostname=tranquility"
-        - "interlock.domain=aodtest.com"
+        - "interlock.hostname=${DEPLOYMENT_NAME}.tranquility"
+        - "interlock.domain=${DOMAIN_NAME}"
         - "interlock.port=8200"
         - "interlock.network=druid_default"
     deploy:
@@ -231,8 +232,8 @@ services:
     volumes:
       - $PWD/superset-conf:/etc/superset
     labels:
-        - "interlock.hostname=superset"
-        - "interlock.domain=aodtest.com"
+        - "interlock.hostname=${DEPLOYMENT_NAME}.superset"
+        - "interlock.domain=${DOMAIN_NAME}"
         - "interlock.port=8088"
         - "interlock.network=druid_default"
 

@@ -52,4 +52,12 @@ if [ "$DRUID_MAX_DIRECTMEM_SIZE" != "-" ]; then
     sed -ri 's/MaxDirectMemorySize.*/MaxDirectMemorySize='${DRUID_MAX_DIRECTMEM_SIZE}'/g' /opt/druid/conf/druid/$1/jvm.config
 fi
 echo 9
+
+: ${KAFKA_BROKER_HOSTNAME='kafka'}
+: ${KAFKA_BROKER_PORT='9092'}
+
+echo "Waiting for kafka server @ $KAFKA_BROKER_HOSTNAME:$KAFKA_BROKER_PORT to start... "
+until nc -z -w 2 ${KAFKA_BROKER_HOSTNAME} ${KAFKA_BROKER_PORT}; do sleep 1; done
+echo "Kafka brokers are now online @ $KAFKA_BROKER_HOSTNAME:$KAFKA_BROKER_PORT"
+
 java `cat /opt/druid/conf/druid/$1/jvm.config | xargs` -cp /opt/druid/conf/druid/_common:/opt/druid/conf/druid/$1:/opt/druid/lib/* io.druid.cli.Main server $@

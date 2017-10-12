@@ -2,7 +2,7 @@ Docker Druid
 ================
 
 
-#Build
+# Build
 
 Execute the following makefile targets to build this docker image
 	1. `make docker`: builds the docker image

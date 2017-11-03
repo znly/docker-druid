@@ -18,40 +18,32 @@ echo "ipaddress ${ipaddress}"
 if [ "${1:0:1}" = '' ]; then
     set -- broker "$@"
 fi
-echo 1
 if [ "$DRUID_XMX" != "-" ]; then
     sed -ri 's/Xmx.*/Xmx'${DRUID_XMX}'/g' /opt/druid/conf/druid/$1/jvm.config
 fi
-echo 2
 if [ "$DRUID_XMS" != "-" ]; then
     sed -ri 's/Xms.*/Xms'${DRUID_XMS}'/g' /opt/druid/conf/druid/$1/jvm.config
 fi
-echo 3
 if [ "$DRUID_MAXNEWSIZE" != "-" ]; then
     sed -ri 's/MaxNewSize=.*/MaxNewSize='${DRUID_MAXNEWSIZE}'/g' /opt/druid/conf/druid/$1/jvm.config
 fi
-echo 4
 if [ "$DRUID_NEWSIZE" != "-" ]; then
     sed -ri 's/NewSize=.*/NewSize='${DRUID_NEWSIZE}'/g' /opt/druid/conf/druid/$1/jvm.config
 fi
-echo 5
 if [ "$DRUID_HOSTNAME" != "-" ]; then
     sed -ri 's/druid.host=.*/druid.host='${DRUID_HOSTNAME}'/g' /opt/druid/conf/druid/$1/runtime.properties
 fi
-echo 6
 if [ "$DRUID_LOGLEVEL" != "-" ]; then
     sed -ri 's/druid.emitter.logging.logLevel=.*/druid.emitter.logging.logLevel='${DRUID_LOGLEVEL}'/g' /opt/druid/conf/druid/_common/common.runtime.properties
 fi
-echo 7
 if [ "$DRUID_USE_CONTAINER_IP" != "-" ]; then
     ipaddress=`ip a|grep "global eth0"|awk '{print $2}'|awk -F '\/' '{print $1}'`
     sed -ri 's/druid.host=.*/druid.host='${ipaddress}'/g' /opt/druid/conf/druid/$1/runtime.properties
 fi
-echo 8
 if [ "$DRUID_MAX_DIRECTMEM_SIZE" != "-" ]; then
     sed -ri 's/MaxDirectMemorySize.*/MaxDirectMemorySize='${DRUID_MAX_DIRECTMEM_SIZE}'/g' /opt/druid/conf/druid/$1/jvm.config
 fi
-echo 9
+
 
 : ${KAFKA_BROKER_HOSTNAME='kafka'}
 : ${KAFKA_BROKER_PORT='9092'}
